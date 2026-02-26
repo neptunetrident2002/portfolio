@@ -14,3 +14,17 @@ menuToggle.addEventListener("click", function() { //this works because javascrip
         navLinks.style.display = "flex";
     }
 });
+
+const faders = document.querySelectorAll(".fade-in");
+
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+        }
+    });
+});
+
+faders.forEach(section => {
+    observer.observe(section);
+});

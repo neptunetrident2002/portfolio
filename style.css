@@ -1,3 +1,10 @@
+:root {
+    --primary: #6366f1;
+    --dark: #0f172a;
+    --light: #f8fafc;
+    --accent: #22d3ee;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -8,7 +15,7 @@ html {
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: "IBM Plex Mono", monospace;
     text-align: center;
 
 }
@@ -18,13 +25,23 @@ section {
 }
 
 .hero {
-    background: #111;
+    background: linear-gradient(135deg, var(--dark), var(--primary));
     color: white;
-    height : 90vh;
+    height : 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center; /*this main axis*/
     align-items: center; /*this cross axis*/
+}
+
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    object-fit: cover;
+    object-position: 75% 95%;
+    border: 4px solid white;
 }
 
 button {
@@ -62,10 +79,28 @@ button:hover {
 }
 
 .project-card {
-    background: #f4f4f4;
+    background: white;
     padding: 20px;
-    width: 200px;
-    border-radius: 8px;
+    width: 250px;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 h1 {
@@ -80,6 +115,10 @@ h2 {
 
 p {
     font-size: 18px;
+}
+
+button {
+    font-family: "Cascadia Mono", monospace;
 }
 
 .navbar {
