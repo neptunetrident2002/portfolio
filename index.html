@@ -563,14 +563,14 @@
   <div class="hero-orb"></div>
 
   <!-- TO CHANGE NAME: edit text below -->
-  <h1 class="hero-name">ASHUTOSH<br><span class="soft">Mishra</span></h1>
+  <h1 class="hero-name">ASHUTOSH<br><span class="soft">Mishra.</span></h1>
 
   <div class="hero-row">
     <div class="hero-badge">Full-Stack Dev</div>
     <!-- TO CHANGE TAGLINE: edit this paragraph -->
     <p class="hero-bio">
       A thinker in a builder's body.<br>
-      When i am not philosophizing, i code.
+      <em>When I'm not philosophizing, I code.</em>
     </p>
   </div>
 
@@ -601,13 +601,13 @@
       <div class="sidebar-label">Based in</div>
       <div class="sidebar-val">India</div>
       <div class="sidebar-label">Open to</div>
-      <div class="sidebar-val">Collaborations,<br>Opportunities,<br>Good Conversations.</div>
+      <div class="sidebar-val">Collaborations,<br>opportunities,<br>good conversations.</div>
     </aside>
     <!-- TO CHANGE BIO PARAGRAPHS: edit the <p> tags below -->
     <div class="about-copy reveal">
-      <p>I'm Ashutosh — an arm-chair philosopher who is deeply interested in technology. Currently a full-stack developer but always learning new things.</p>
-      <p>When not courting computers, I spend some time with my other lovers — books and philosophy</p>
-      <p>Anyways thanks for visiting. You can check out projects I've built, things I've read and thoughts I've had.</p>
+      <p>I'm Ashutosh — an armchair philosopher deeply interested in technology. Currently building full-stack, but always learning something new.</p>
+      <p>When not courting computers, I spend time with my other loves — books, philosophy, the occasional long thought.</p>
+      <p>Anyway, glad you're here. Take a look around — projects I've built, things I've read, thoughts I've had.</p>
     </div>
   </div>
 </section>
@@ -622,11 +622,12 @@
   </div>
   <!--
     TO ADD A PROJECT: copy this .reveal div and change:
-      1. openModal('name', 'https://URL', 'description') in onclick
-      2. p-tag, p-name, p-desc content
+      1. openPreview('Title', 'https://LIVE-URL', './screenshot.png', 'description') in onclick
+      2. screenshot: save a PNG in the same folder as this HTML file, update the path above
+      3. p-tag, p-name, p-desc content
   -->
   <div class="reveal"
-    onclick="openModal('brainmatters', 'https://brainmatters.vercel.app', 'A project at the intersection of thought and interface.')">
+    onclick="openPreview('brainmatters', 'https://brainmatters.vercel.app/', './brainmatters-preview.png', 'A project at the intersection of thought and interface.')">
     <div class="project-card">
       <div class="p-tag">Web App · Full-stack</div>
       <h3 class="p-name">brainmatters</h3>
@@ -636,7 +637,7 @@
   </div>
 </section>
 
-<!-- Project preview modal -->
+<!-- Project preview modal — shows screenshot + link to live site -->
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal">
     <div class="modal-bar">
@@ -646,13 +647,26 @@
       </div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-frame">
-      <iframe id="modalIframe" src="" title="Project preview"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+    <!--
+      Screenshot area — image fills this frame.
+      If screenshot file is missing, a placeholder message shows instead.
+    -->
+    <div class="modal-frame" id="modalFrame">
+      <img id="modalScreenshot" src="" alt="Project screenshot"
+        style="width:100%;display:block;object-fit:cover;max-height:520px;"
+        onerror="this.style.display='none';document.getElementById('modalNoScreenshot').style.display='flex'"/>
+      <!-- Shown if screenshot file not found -->
+      <div id="modalNoScreenshot" style="display:none;min-height:280px;align-items:center;justify-content:center;flex-direction:column;gap:1rem;background:var(--bg-alt);">
+        <span style="font-size:2rem;opacity:.3">📸</span>
+        <p style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--ink-soft);letter-spacing:.08em;text-align:center;">
+          Add a screenshot to see preview here.<br>
+          <span style="opacity:.6;">Save as <code id="modalFilename"></code> in the same folder as this HTML.</span>
+        </p>
+      </div>
     </div>
     <div class="modal-foot">
       <span class="modal-foot-desc" id="modalDesc"></span>
-      <a href="#" id="modalExtLink" class="modal-ext" target="_blank" rel="noopener">Open full site ↗</a>
+      <a href="#" id="modalExtLink" class="modal-ext" target="_blank" rel="noopener">Open live site ↗</a>
     </div>
   </div>
 </div>
@@ -1117,19 +1131,35 @@ function handleReaderOverlayClick(e) {
 }
 
 
-/* ── Project Modal ────────────────────────────────────────────────── */
-function openModal(name, url, desc) {
-  document.getElementById('modalDomain').textContent = url.replace('https://', '');
+/* ── Project Preview Modal ────────────────────────────────────────── */
+// openPreview(name, liveUrl, screenshotPath, description)
+// screenshotPath: path to image file relative to this HTML, e.g. "./brainmatters-preview.png"
+// If the image file is missing, a helpful placeholder shows instead.
+function openPreview(name, url, screenshot, desc) {
+  const img      = document.getElementById('modalScreenshot');
+  const noImg    = document.getElementById('modalNoScreenshot');
+  const filename = document.getElementById('modalFilename');
+
+  // Reset state
+  img.style.display = '';
+  noImg.style.display = 'none';
+
+  // Set screenshot source — onerror in HTML handles missing file gracefully
+  img.src = screenshot;
+  // Show expected filename in the fallback message
+  if (filename) filename.textContent = screenshot.split('/').pop();
+
+  document.getElementById('modalDomain').textContent = url.replace('https://', '').replace(/\/$/, '');
   document.getElementById('modalDesc').textContent   = desc;
   document.getElementById('modalExtLink').href       = url;
-  document.getElementById('modalIframe').src         = url;
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
-  setTimeout(() => { document.getElementById('modalIframe').src = ''; }, 380);
+  // Clear image src after animation so it doesn't flash on reopen
+  setTimeout(() => { document.getElementById('modalScreenshot').src = ''; }, 380);
 }
 function handleOverlayClick(e) {
   if (e.target === document.getElementById('modalOverlay')) closeModal();
